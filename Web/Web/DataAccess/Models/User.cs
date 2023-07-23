@@ -7,6 +7,7 @@ namespace Web.DataAccess.Models
     {
         public User()
         {
+            Attendances = new HashSet<Attendance>();
             ClassDetails = new HashSet<ClassDetail>();
         }
 
@@ -17,6 +18,7 @@ namespace Web.DataAccess.Models
         public string Role { get; set; } = null!;
         public string? FullName { get; set; }
 
+        public virtual ICollection<Attendance> Attendances { get; set; }
         public virtual ICollection<ClassDetail> ClassDetails { get; set; }
     }
 }

@@ -5,13 +5,19 @@ namespace Web.DataAccess.Models
 {
     public partial class ScheduleDetail
     {
-        public int ScheduleDetailId { get; set; }
-        public int ScheduleId { get; set; }
-        public int SlotId { get; set; }
-        public int RoomId { get; set; }
-        public DateTime Date { get; set; }
-        public bool Attendance { get; set; }
+        public ScheduleDetail()
+        {
+            Attendances = new HashSet<Attendance>();
+        }
 
-        public virtual Slot Slot { get; set; } = null!;
+        public int ScheduleDetailId { get; set; }
+        public int SheduleId { get; set; }
+        public int RoomId { get; set; }
+        public int Slot { get; set; }
+        public DateTime Date { get; set; }
+
+        public virtual Room Room { get; set; } = null!;
+        public virtual Schedule Shedule { get; set; } = null!;
+        public virtual ICollection<Attendance> Attendances { get; set; }
     }
 }

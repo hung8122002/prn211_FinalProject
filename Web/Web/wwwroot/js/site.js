@@ -14,6 +14,14 @@ $(document).ready(function () {
         changeDate()
     })
 
+    $(".datepicker").click(() => {
+        $(".datepicker-dropdown").show()
+    })
+
+    $(".datepicker-dropdown").click(() => {
+        $(".datepicker-dropdown").hide()
+    })
+
     function getWeekDatesContainingDate(dateString) {
         const [day, month, year] = dateString.split('/'); // Tách chuỗi thành ngày, tháng và năm
         const date = new Date(`${month}/${day}/${year}`); // Tạo đối tượng Date từ chuỗi ngày tháng năm
@@ -23,14 +31,14 @@ $(document).ready(function () {
         for (let i = date.getDay(); i >= 0; i--) {
             const nextDay = new Date(date.getTime());
             nextDay.setDate(date.getDate() - i); // Tính toán ngày trong tuần
-            const nextDayString = `${nextDay.getDate().toString().padStart(2, '0')}/${(nextDay.getMonth() + 1).toString().padStart(2, '0')}`; // Định dạng ngày trong tuần
+            const nextDayString = `${nextDay.getDate().toString().padStart(2, '0')}/${(nextDay.getMonth() + 1).toString().padStart(2, '0')}/${year}`; // Định dạng ngày trong tuần
             dates.push(nextDayString);
         }
 
         for (let i = 1; i < 7 - date.getDay(); i++) {
             const nextDay = new Date(date.getTime());
             nextDay.setDate(date.getDate() + i); // Tính toán ngày trong tuần
-            const nextDayString = `${nextDay.getDate().toString().padStart(2, '0')}/${(nextDay.getMonth() + 1).toString().padStart(2, '0')}`; // Định dạng ngày trong tuần
+            const nextDayString = `${nextDay.getDate().toString().padStart(2, '0')}/${(nextDay.getMonth() + 1).toString().padStart(2, '0')}/${year}`; // Định dạng ngày trong tuần
             dates.push(nextDayString);
         }
 
@@ -39,26 +47,35 @@ $(document).ready(function () {
 
     function changeDate() {
         const weekDates = getWeekDatesContainingDate(datepicker.val());
-        var th = $("th")
-        var td = $("td")
+        var th = $(".schedule th")
+        var td = $(".schedule td")
         const date = new Date().toISOString();
         for (var i = 1; i < 8; i++) {
-            th.eq(i).text(th.eq(i).text().slice(0, 4) + " - " + weekDates[i - 1])
+            th.eq(i).text(th.eq(i).text().slice(0, 4) + " - " + weekDates[i - 1].slice(0, 5))
         }
+        for (var i = 0; i < td.length; i++) {
+            td.eq(i).text("-")
+        }
+
         $.get("/MainPage", {
             handler: "Data",
             startDate: weekDates[0],
             endDate: weekDates[6]
         }, function (data) {
+            console.log(data)
             var day = 1;
             var list = data.scheduleDetailDTOs
             for (var i = 0; i < list.length; i++) {
-                if (i > 0 && list[i].date > list[i - 1].date) {
+                const item = list[i];
+                if (i > 0 && item.scheduleDetail.date > list[i - 1].scheduleDetail.date) {
                     day++;
                 }
-                const index = (list[i].slot - 1) * 7 + day
-                td.eq(index).html(`<p class="table-title">Course: <a>${list[i].course.courseName}</a> </br> at ${list[i].class.className}</p>`)
-                td.eq(index).append(`<p class="${list[i].attendance ? 'attended' : list[i].date <= date ? 'absent' : 'not-yet'}">(${list[i].attendance ? 'Attended' : list[i].date <= date ? 'Absent' : 'Not yet'})</p>`)
+                const index = (item.scheduleDetail.slot - 1) * 7 + day
+                td.eq(index).html(`<p class="table-title">Course: <a data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">${item.scheduleDetail.shedule.course.courseName}</a> </br> at ${item.scheduleDetail.room.roomName}</p>`)
+                $(td.eq(index)).find("a").click(() => {
+                    showDetail(item.scheduleDetail.shedule.class.className, item.scheduleDetail.shedule.course.courseName, item.scheduleDetail.shedule.course.courseDescription)
+                })
+                td.eq(index).append(`<p class="${item.attendance1 ? 'attended' : item.scheduleDetail.date <= date ? 'absent' : 'not-yet'}">(${item.attendance1 ? 'Attended' : item.scheduleDetail.date <= date ? 'Absent' : 'Not yet'})</p>`)
             }
         });
     }
@@ -80,5 +97,20 @@ $(document).ready(function () {
         setTimeout(() => {
             $(el).remove();
         }, 3500);
+    }
+
+    //hiện chi tiết môn học
+    function showDetail(group, courseName, courseDecription) {
+        var td = $(".activity td")
+        $.get("/MainPage", {
+            handler: "Teacher",
+            group,
+            courseName
+        }, function (data) {
+            td.eq(0).text(group)
+            td.eq(1).text(data.userDTO.fullName)
+            td.eq(2).text(data.userDTO.email)
+            td.eq(3).text(courseDecription + "(" + courseName + ")")
+        });
     }
 });

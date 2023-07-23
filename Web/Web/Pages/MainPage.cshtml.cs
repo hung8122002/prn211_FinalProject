@@ -1,64 +1,43 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using System.Data;
 using System.Text;
-using Web.Bussiness.DTO;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Web.DataAccess.Models;
 using Web.Bussiness.IRepository;
+using Web.Bussiness.DTO;
 
 namespace Web.Pages
 {
     public class MainPageModel : PageModel
     {
-        private readonly IScheduleRepository _scheduleDetailRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IScheduleRepository scheduleRepository;
 
-        public MainPageModel(IScheduleRepository scheduleDetailRepository, IUserRepository userRepository)
+        public MainPageModel(IUserRepository userRepository, IScheduleRepository scheduleRepository)
         {
-            _scheduleDetailRepository = scheduleDetailRepository;
-            _userRepository = userRepository;
+            this.userRepository = userRepository;
+            this.scheduleRepository = scheduleRepository;
         }
 
         public void OnGet()
         {
-
         }
 
-        public JsonResult OnGetData([FromServices] IConfiguration configuration, DateTime startDate, DateTime endDate)
+        public IActionResult OnGetData(string startDate, string endDate)
         {
-            var jwt = HttpContext.Session.GetString("jwt");
+            UserDTO user = userRepository.GetUserByUsername(HttpContext.Session.GetString("username"));
+            List<AttendanceDTO> scheduleDetailDTOs = scheduleRepository.GetScheduleDetails(user.UserId, DateTime.Parse(startDate), DateTime.Parse(endDate));
+            var result = new { scheduleDetailDTOs };
+            return new JsonResult(result);
+        }
 
-            // Decode the JWT and extract the claims
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var secretKey = configuration["Jwt:SecretKey"];
-            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-            var key = new SymmetricSecurityKey(keyBytes);
-            try
-            {
-                tokenHandler.ValidateToken(jwt, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = key,
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                }, out SecurityToken validatedToken);
-
-                // Get the JWT claims
-                var claims = (validatedToken as JwtSecurityToken).Claims;
-                // Use the claims to authenticate the user
-                string username = claims.FirstOrDefault(c => c.Type == "name").Value;
-                //UserDTO userDTO = _userRepository.GetUserByUsername(username);
-                List<ScheduleDTO> scheduleDetailDTOs = _scheduleDetailRepository.GetScheduleDetails(1, startDate, endDate);
-                var result = new { scheduleDetailDTOs };
-                return new JsonResult(result);
-            }
-            catch (SecurityTokenException)
-            {
-                // The token is not valid
-                // Handle the error
-                return null;
-            }
+        public IActionResult OnGetTeacher(string group, string courseName)
+        {
+            UserDTO userDTO = userRepository.GetTeacher(group, courseName);
+            var result = new { userDTO };
+            return new JsonResult(result);
         }
     }
 }

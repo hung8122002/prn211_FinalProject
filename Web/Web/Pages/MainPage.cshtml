@@ -16,7 +16,7 @@
 
             <li class="flex-1">
                 <a class="block bg-gray-100 p-4 text-sm font-medium text-gray-500 ring-1 ring-inset ring-white"
-                   href="">
+                   href="/AttdendanceReport">
                     Attendance report
                 </a>
             </li>
@@ -30,7 +30,7 @@
         </ul>
     </nav>
 
-    <table style="margin: 20px auto">
+    <table class="schedule" style="margin: 20px auto">
         <tr>
             <th>
                 <div class="relative w-32">
@@ -113,4 +113,30 @@
             <td>-</td>
         </tr>
     </table>
+
+    <div class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden bg-black/[.54] overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog relative w-full max-w-md max-h-full m-auto mt-40">
+            <div class="modal-content relative bg-white rounded-lg shadow dark:bg-white-700 p-4">
+                <h2>Activity detail</h2>
+                <table style="width: 100%" class="activity">
+                    <tr>
+                        <th>Student group: </th>
+                        <td>abcd</td>
+                    </tr>
+                    <tr>
+                        <th>Instructor:	</th>
+                        <td>abcd</td>
+                    </tr>
+                    <tr>
+                        <th>Instructor contact: </th>
+                        <td>abcd</td>
+                    </tr>
+                    <tr>
+                        <th>Course: </th>
+                        <td>abcd</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>

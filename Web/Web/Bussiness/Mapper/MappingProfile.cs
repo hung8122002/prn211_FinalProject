@@ -13,7 +13,10 @@ namespace Web.Bussiness.Mapper
             CreateMap<Class, ClassDTO>();
             CreateMap<ClassDetail, ClassDetailDTO>();
             CreateMap<Course, CourseDTO>();
+            CreateMap<ScheduleDetail, ScheduleDetailDTO>();
+            CreateMap<Semester, SemesterDTO>();
             CreateMap<Room, RoomDTO>();
+            CreateMap<Attendance, AttendanceDTO>();
         }
     }
 }

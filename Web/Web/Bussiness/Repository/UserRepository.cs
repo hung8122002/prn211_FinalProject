@@ -10,16 +10,24 @@ namespace Web.Bussiness.Repository
     {
         PRN211_FinalProjectContext _projectContext;
         IMapper _mapper;
+        UserManager userManager;
 
         public UserRepository(PRN211_FinalProjectContext projectContext, IMapper mapper)
         {
             _projectContext = projectContext;
             _mapper = mapper;
+            userManager = new(_projectContext);
+        }
+
+        public UserDTO GetTeacher(string group, string courseName)
+        {
+            User user = userManager.GetTeacher(group, courseName);
+            UserDTO userDTO = _mapper.Map<UserDTO>(user);
+            return userDTO;
         }
 
         public UserDTO GetUser(string username, string password)
         {
-            UserManager userManager = new(_projectContext);
             User user = userManager.GetUser(username, password);
             UserDTO userDTO = _mapper.Map<UserDTO>(user);
             return userDTO;
@@ -27,7 +35,6 @@ namespace Web.Bussiness.Repository
 
         public UserDTO GetUserByUsername(string username)
         {
-            UserManager userManager = new(_projectContext);
             User user = userManager.GetUserByUsername(username);
             UserDTO userDTO = _mapper.Map<UserDTO>(user);
             return userDTO;

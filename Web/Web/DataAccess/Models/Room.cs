@@ -7,12 +7,12 @@ namespace Web.DataAccess.Models
     {
         public Room()
         {
-            Schedules = new HashSet<Schedule>();
+            ScheduleDetails = new HashSet<ScheduleDetail>();
         }
 
         public int RoomId { get; set; }
         public string RoomName { get; set; } = null!;
 
-        public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<ScheduleDetail> ScheduleDetails { get; set; }
     }
 }

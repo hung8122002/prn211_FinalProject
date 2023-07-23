@@ -16,11 +16,13 @@ namespace Web.DataAccess.Models
         {
         }
 
+        public virtual DbSet<Attendance> Attendances { get; set; } = null!;
         public virtual DbSet<Class> Classes { get; set; } = null!;
         public virtual DbSet<ClassDetail> ClassDetails { get; set; } = null!;
         public virtual DbSet<Course> Courses { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
+        public virtual DbSet<ScheduleDetail> ScheduleDetails { get; set; } = null!;
         public virtual DbSet<Semester> Semesters { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
@@ -35,13 +37,30 @@ namespace Web.DataAccess.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Attendance>(entity =>
+            {
+                entity.ToTable("Attendance");
+
+                entity.Property(e => e.Attendance1).HasColumnName("Attendance");
+
+                entity.HasOne(d => d.ScheduleDetail)
+                    .WithMany(p => p.Attendances)
+                    .HasForeignKey(d => d.ScheduleDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Attendance_ScheduleDetail");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Attendances)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Attendance_User");
+            });
+
             modelBuilder.Entity<Class>(entity =>
             {
                 entity.ToTable("Class");
 
-                entity.Property(e => e.ClassName)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.ClassName).HasMaxLength(10);
             });
 
             modelBuilder.Entity<ClassDetail>(entity =>
@@ -65,29 +84,21 @@ namespace Web.DataAccess.Models
             {
                 entity.ToTable("Course");
 
-                entity.Property(e => e.CourseDescription)
-                    .HasMaxLength(100)
-                    .IsFixedLength();
+                entity.Property(e => e.CourseDescription).HasMaxLength(100);
 
-                entity.Property(e => e.CourseName)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.CourseName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Room>(entity =>
             {
                 entity.ToTable("Room");
 
-                entity.Property(e => e.RoomName)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.RoomName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Schedule>(entity =>
             {
                 entity.ToTable("Schedule");
-
-                entity.Property(e => e.Date).HasColumnType("date");
 
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Schedules)
@@ -99,13 +110,7 @@ namespace Web.DataAccess.Models
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.CourseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Schedule_Course");
-
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.Schedules)
-                    .HasForeignKey(d => d.RoomId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Schedule_Room");
+                    .HasConstraintName("FK_Schedule_Course1");
 
                 entity.HasOne(d => d.Semester)
                     .WithMany(p => p.Schedules)
@@ -114,13 +119,30 @@ namespace Web.DataAccess.Models
                     .HasConstraintName("FK_Schedule_Semester");
             });
 
+            modelBuilder.Entity<ScheduleDetail>(entity =>
+            {
+                entity.ToTable("ScheduleDetail");
+
+                entity.Property(e => e.Date).HasColumnType("date");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.ScheduleDetails)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ScheduleDetail_Room");
+
+                entity.HasOne(d => d.Shedule)
+                    .WithMany(p => p.ScheduleDetails)
+                    .HasForeignKey(d => d.SheduleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ScheduleDetail_Schedule");
+            });
+
             modelBuilder.Entity<Semester>(entity =>
             {
                 entity.ToTable("Semester");
 
-                entity.Property(e => e.SemesterName)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.SemesterName).HasMaxLength(10);
             });
 
             modelBuilder.Entity<User>(entity =>

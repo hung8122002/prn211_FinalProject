@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using Web.DataAccess.Models;
 
 namespace Web.DataAccess.Manager
@@ -12,17 +13,18 @@ namespace Web.DataAccess.Manager
             _projectContext = projectContext;
         }
 
-        public List<Schedule> GetScheduleDetails(int userId, DateTime startDate, DateTime endDate)
+        public List<Attendance> GetScheduleDetails(int userId, DateTime startDate, DateTime endDate)
         {
-            return _projectContext.ClassDetails
-                .Where(c => c.UserId == userId)
-                .SelectMany(classDetail => _projectContext.Schedules
-                    .Include(s => s.Class)
-                    .Include(s => s.Room)
-                    .Include(s => s.Course)
-                    .Where(s => s.ClassId == classDetail.ClassId && s.Date >= startDate && s.Date <= endDate))
-                .OrderBy(s => s.Date) // sắp xếp thời gian tăng dần
-                .ToList();
+            List<Attendance> attendances = _projectContext.Attendances
+    .Include(a => a.User)
+    .Include(a => a.ScheduleDetail).ThenInclude(c => c.Shedule).ThenInclude(c => c.Course)
+    .Include(a => a.ScheduleDetail).ThenInclude(c => c.Shedule).ThenInclude(c => c.Semester)
+    .Include(a => a.ScheduleDetail).ThenInclude(c => c.Shedule).ThenInclude(c => c.Class)
+    .Include(a => a.ScheduleDetail).ThenInclude(c => c.Room)
+    .Where(a => a.UserId == userId && a.ScheduleDetail.Date >= startDate && a.ScheduleDetail.Date <= endDate)
+    .OrderBy(a => a.ScheduleDetail.Date)
+    .ToList();
+            return attendances;
         }
     }
 }

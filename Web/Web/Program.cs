@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Web.Bussiness.IRepository;
+﻿using Web.Bussiness.IRepository;
 using Web.Bussiness.Mapper;
 using Web.Bussiness.Repository;
 using Web.DataAccess.Models;
@@ -24,34 +18,6 @@ builder.Services.AddDbContext<PRN211_FinalProjectContext>(opt => builder.Configu
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IScheduleRepository, ScheduleRepository>();
-var Configuration = builder.Configuration;
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Jwt:SecretKey"])),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-})
-    .AddCookie()
-    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-    {
-        IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
-
-        options.ClientId = googleAuthNSection["ClientId"];
-        options.ClientSecret = googleAuthNSection["ClientSecret"];
-    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -70,7 +36,6 @@ app.UseSession();
 
 app.UseAuthorization();
 app.UseAuthentication();
-
 app.MapRazorPages();
 
 app.Run();

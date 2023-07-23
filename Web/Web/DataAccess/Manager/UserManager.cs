@@ -1,4 +1,5 @@
-﻿using Web.DataAccess.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Web.DataAccess.Models;
 
 namespace Web.DataAccess.Manager
 {
@@ -21,6 +22,20 @@ namespace Web.DataAccess.Manager
         {
             User user = context.Users.FirstOrDefault(c => c.UserName.Equals(username));
             return user;
+        }
+
+        public User GetTeacher(string group, string courseName)
+        {
+            Schedule Schedule = context.Schedules.Include(c => c.Class).ThenInclude(c => c.ClassDetails).Include(c => c.Course).FirstOrDefault(c => c.Course.CourseName.Equals(courseName) && c.Class.ClassName.Equals(group));
+            foreach (var item in Schedule.Class.ClassDetails)
+            {
+                User user = context.Users.FirstOrDefault(c => c.UserId == item.UserId && c.Role.Equals("teacher"));
+                if (user != null)
+                {
+                    return user;
+                }
+            }
+            return null;
         }
     }
 }

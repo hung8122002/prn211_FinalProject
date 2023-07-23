@@ -10,18 +10,19 @@ namespace Web.Bussiness.Repository
     {
         PRN211_FinalProjectContext _projectContext;
         IMapper _mapper;
+        ScheduleManager scheduleManager;
 
         public ScheduleRepository(PRN211_FinalProjectContext projectContext, IMapper mapper)
         {
             _projectContext = projectContext;
             _mapper = mapper;
+            scheduleManager= new(_projectContext);
         }
 
-        public List<ScheduleDTO> GetScheduleDetails(int userId, DateTime startDate, DateTime endDate)
+        public List<AttendanceDTO> GetScheduleDetails(int userId, DateTime startDate, DateTime endDate)
         {
-            ScheduleManager scheduleManager = new(_projectContext);
-            List<Schedule> scheduleDetails = scheduleManager.GetScheduleDetails(userId, startDate, endDate);
-            List<ScheduleDTO> scheduleDetailDTOs = _mapper.Map<List<ScheduleDTO>>(scheduleDetails);
+            List<Attendance> scheduleDetails = scheduleManager.GetScheduleDetails(userId, startDate, endDate);
+            List<AttendanceDTO> scheduleDetailDTOs = _mapper.Map<List<AttendanceDTO>>(scheduleDetails);
             return scheduleDetailDTOs;
         }
     }
