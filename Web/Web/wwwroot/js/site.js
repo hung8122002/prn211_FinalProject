@@ -5,6 +5,8 @@
 $(document).ready(function () {
     var datepicker = $(".datepicker");
     changeDate()
+    showListDay()
+    submitAttendance()
     datepicker.on("input", () => {
         changeDate()
     })
@@ -46,6 +48,9 @@ $(document).ready(function () {
     }
 
     function changeDate() {
+        if (!datepicker.val()) {
+            return
+        }
         const weekDates = getWeekDatesContainingDate(datepicker.val());
         var th = $(".schedule th")
         var td = $(".schedule td")
@@ -112,5 +117,44 @@ $(document).ready(function () {
             td.eq(2).text(data.userDTO.email)
             td.eq(3).text(courseDecription + "(" + courseName + ")")
         });
+    }
+
+    function showListDay() {
+        var listDay = $(".list-day");
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Months start at 0!
+        let dd = today.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        const formattedToday = dd + '/' + mm + '/' + yyyy;
+        var date = getWeekDatesContainingDate("18/07/2023");
+        for (var i = 1; i < date.length - 1; i++) {
+            listDay.append(`<p><a href="/Teacher/AttdendanceReport?handler=Date&date=${date[i]}">${date[i]}</a></p>`)
+        }
+    }
+
+    function submitAttendance() {
+        var form = $(".attendance-form");
+        var button = form.find("button");
+        console.log(button)
+        button.click((e) => {
+            e.preventDefault();
+            var data = [];
+            var attendanceIdList = form.find(".attendanceId");
+            var attendanceList = form.find(".attendance");
+            for (var i = 0; i < attendanceIdList.length; i++) {
+                data.push({
+                    id: attendanceIdList.eq(i).val(),
+                    status: attendanceList.eq(i).prop("checked")
+                })
+            }
+            $.get("/Teacher/AttdendanceReport", {
+                handler: "Data",
+                data: JSON.stringify(data)
+            })
+        })
     }
 });

@@ -8,7 +8,7 @@
         <ul class="flex border-b border-gray-200 text-center">
             <li class="flex-1">
                 <a class="relative block border-e border-s border-t border-gray-200 bg-white p-4 text-sm font-medium"
-                   href="">
+                   href="/MainPage">
                     <span class="absolute inset-x-0 -bottom-px h-px w-full bg-white"></span>
                     Weekly timetable
                 </a>
@@ -16,7 +16,7 @@
 
             <li class="flex-1">
                 <a class="block bg-gray-100 p-4 text-sm font-medium text-gray-500 ring-1 ring-inset ring-white"
-                   href="/AttdendanceReport">
+                   href="@(Model.role.Equals("student") ? "/AttdendanceReport" : "/Teacher/AttdendanceReport")">
                     Attendance report
                 </a>
             </li>

@@ -1,0 +1,62 @@
+﻿@page
+@model Web.Pages.Teacher.AttdendanceReportModel
+@{
+}
+<nav aria-label="Tabs">
+    <ul class="flex border-b border-gray-200 text-center">
+        <li class="flex-1">
+            <a class="block bg-gray-100 p-4 text-sm font-medium text-gray-500 ring-1 ring-inset ring-white"
+               href="/MainPage">
+                <span class="absolute inset-x-0 -bottom-px h-px w-full bg-white"></span>
+                Weekly timetable
+            </a>
+        </li>
+
+        <li class="flex-1">
+            <a class="relative block border-e border-s border-t border-gray-200 bg-white p-4 text-sm font-medium"
+               href="@(Model.role.Equals("student") ? "/AttdendanceReport" : "/Teacher/AttdendanceReport")">
+                Attendance report
+            </a>
+        </li>
+
+        <li class="flex-1">
+            <a class="block bg-gray-100 p-4 text-sm font-medium text-gray-500 ring-1 ring-inset ring-white"
+               href="">
+                Feedback about attendance
+            </a>
+        </li>
+    </ul>
+</nav>
+<div>
+    <div>
+        <div class="list-day">
+        </div>
+
+        <div>
+            @if (Model.scheduleDetailDTOs != null)
+            {
+                @foreach (var item in Model.scheduleDetailDTOs)
+                {
+                    <a asp-page="/Teacher/AttdendanceReport" asp-page-handler="Attendance" asp-route-scheduleDetailId="@item.ScheduleDetailId">@item.Shedule.Class.ClassName - @item.Slot</a>
+                }
+            }
+        </div>
+    </div>
+    <div>
+        @if (Model.attendanceDTOs != null)
+        {
+            <form class="attendance-form" asp-page="/Teacher/AttdendanceReport">
+                @foreach (var item in Model.attendanceDTOs)
+                {
+                    <div>
+                        <a>@item.User.FullName</a>
+                        <input class="attendanceId" hidden value="@item.AttendanceId" />
+                        <label for="a + @item.AttendanceId">Attendance</label>
+                        <input id="a + @item.AttendanceId" class="attendance" type="checkbox" asp-for="@item.Attendance1" checked="@item.Attendance1" />
+                    </div>
+                }
+                <button>Save</button>
+            </form>
+        }
+    </div>
+</div>

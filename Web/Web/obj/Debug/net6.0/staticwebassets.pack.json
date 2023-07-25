@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
+      "Id": "D:\\PRN211\\FinalProject\\Web\\Web\\wwwroot\\js\\teacher.js",
+      "PackagePath": "staticwebassets\\js\\teacher.js"
+    },
+    {
       "Id": "D:\\PRN211\\FinalProject\\Web\\Web\\wwwroot\\lib\\bootstrap\\LICENSE",
       "PackagePath": "staticwebassets\\lib\\bootstrap"
     },

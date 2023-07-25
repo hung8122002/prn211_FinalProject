@@ -24,6 +24,7 @@ namespace Web.DataAccess.Models
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<ScheduleDetail> ScheduleDetails { get; set; } = null!;
         public virtual DbSet<Semester> Semesters { get; set; } = null!;
+        public virtual DbSet<Teacher> Teachers { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -143,6 +144,23 @@ namespace Web.DataAccess.Models
                 entity.ToTable("Semester");
 
                 entity.Property(e => e.SemesterName).HasMaxLength(10);
+            });
+
+            modelBuilder.Entity<Teacher>(entity =>
+            {
+                entity.ToTable("Teacher");
+
+                entity.HasOne(d => d.Course)
+                    .WithMany(p => p.Teachers)
+                    .HasForeignKey(d => d.CourseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Teacher_Course");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Teachers)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Teacher_User");
             });
 
             modelBuilder.Entity<User>(entity =>

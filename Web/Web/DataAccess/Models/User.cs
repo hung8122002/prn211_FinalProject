@@ -9,6 +9,7 @@ namespace Web.DataAccess.Models
         {
             Attendances = new HashSet<Attendance>();
             ClassDetails = new HashSet<ClassDetail>();
+            Teachers = new HashSet<Teacher>();
         }
 
         public int UserId { get; set; }
@@ -20,5 +21,6 @@ namespace Web.DataAccess.Models
 
         public virtual ICollection<Attendance> Attendances { get; set; }
         public virtual ICollection<ClassDetail> ClassDetails { get; set; }
+        public virtual ICollection<Teacher> Teachers { get; set; }
     }
 }

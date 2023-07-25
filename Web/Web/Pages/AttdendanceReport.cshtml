@@ -1,4 +1,61 @@
 ﻿@page
 @model Web.Pages.AttdendanceReportModel
 @{
+    var year = DateTime.Now.Year;
 }
+<nav aria-label="Tabs">
+    <ul class="flex border-b border-gray-200 text-center">
+        <li class="flex-1">
+            <a class="block bg-gray-100 p-4 text-sm font-medium text-gray-500 ring-1 ring-inset ring-white"
+               href="/MainPage">
+                <span class="absolute inset-x-0 -bottom-px h-px w-full bg-white"></span>
+                Weekly timetable
+            </a>
+        </li>
+
+        <li class="flex-1">
+            <a class="relative block border-e border-s border-t border-gray-200 bg-white p-4 text-sm font-medium"
+               href="@(Model.role.Equals("student") ? "/AttdendanceReport" : "/Teacher/AttdendanceReport")">
+                Attendance report
+            </a>
+        </li>
+
+        <li class="flex-1">
+            <a class="block bg-gray-100 p-4 text-sm font-medium text-gray-500 ring-1 ring-inset ring-white"
+               href="">
+                Feedback about attendance
+            </a>
+        </li>
+    </ul>
+</nav>
+<div>
+    <div>
+        <div>
+            @for (int i = 2020; i < year; i++)
+            {
+                foreach (var item in Model.semesterDTOs)
+                {
+                    <a asp-page="/AttdendanceReport" asp-page-handler="Courses" asp-route-year="@i" asp-route-semesterId="@item.SemesterId">@item.SemesterName - @i</a>
+                }
+            }
+            @for (int i = 0; i < Math.Ceiling((decimal)DateTime.Now.Month / 4); i++)
+            {
+                <a asp-page="/AttdendanceReport" asp-page-handler="Courses" asp-route-year="@year" asp-route-semesterId="@Model.semesterDTOs[i].SemesterId">@Model.semesterDTOs[i].SemesterName -  @year</a>
+            }
+        </div>
+        <div>
+            @foreach (var item in Model.courses)
+            {
+                <a asp-page="/AttdendanceReport" asp-page-handler="Attendance" asp-route-scheduleId="@item.ScheduleId">@(item.Course.CourseDescription + "(" + item.Course.CourseName + ")")</a>
+            }
+        </div>
+    </div>
+    <div>
+        @foreach (var item in Model.attendanceDTOs)
+        {
+            <a>@item.ScheduleDetail.Date</a>
+            <a>@item.ScheduleDetail.Slot</a>
+            <a>@item.Attendance1</a>
+        }
+    </div>
+</div>

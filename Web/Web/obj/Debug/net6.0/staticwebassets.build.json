@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "B5OlLewZOdGWJtg73Vme4nZp0JJLHbkPd2pd8Q9nvHQ=",
+  "Hash": "4JtUD8hCtivfKFKIPn4e5T7uagQI1WwqK+0LXf5nmig=",
   "Source": "Web",
   "BasePath": "_content/Web",
   "Mode": "Default",
@@ -1120,6 +1120,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\site.js"
+    },
+    {
+      "Identity": "D:\\PRN211\\FinalProject\\Web\\Web\\wwwroot\\js\\teacher.js",
+      "SourceId": "Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\PRN211\\FinalProject\\Web\\Web\\wwwroot\\",
+      "BasePath": "_content/Web",
+      "RelativePath": "js/teacher.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\teacher.js"
     },
     {
       "Identity": "D:\\PRN211\\FinalProject\\Web\\Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
